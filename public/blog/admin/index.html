@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Новости — управление</title>
+  <link rel="stylesheet" href="./admin.css">
+  <script type="module" src="/src/admin/admin.js"></script>
+</head>
+<body>
+  <div id="notice" role="status" aria-live="polite" hidden></div>
+  <section id="auth" class="auth-screen">
+    <div class="auth-card">
+      <a class="brand" href="../../">ТФМ<span>Тюменская фабрика мерча</span></a>
+      <div class="eyebrow">Управление блогом</div>
+      <h1 id="auth-title">Вход в админку</h1>
+      <p id="auth-description" class="muted">Здесь можно добавлять и изменять новости сайта.</p>
+      <form id="auth-form">
+        <label id="username-label">Логин<input id="username" name="username" autocomplete="username" value="admin" required></label>
+        <label>Пароль<input id="password" name="password" type="password" autocomplete="current-password" maxlength="256" required></label>
+        <label id="confirm-label" hidden>Повторите пароль<input id="confirm-password" type="password" autocomplete="new-password" maxlength="256"></label>
+        <label class="checkbox-label"><input id="show-password" type="checkbox">Показать пароль</label>
+        <p id="auth-error" class="error-message" role="alert" hidden></p>
+        <button id="auth-submit" class="button primary" type="submit">Войти →</button>
+      </form>
+      <p id="auth-hint" class="small muted">Доступ есть только у владельца сайта.</p>
+    </div>
+  </section>
+  <div id="app" hidden>
+    <header class="app-header"><a class="brand" href="../../">ТФМ<span>Управление новостями</span></a>
+      <nav><a class="site-link" href="../" target="_blank" rel="noopener">Открыть блог ↗</a><button id="logout" class="button quiet" type="button">Выйти</button></nav>
+    </header>
+    <main>
+      <section id="list-view">
+        <div class="page-heading"><div><div class="eyebrow">Блог сайта</div><h1>Новости<span id="post-count" class="count"></span></h1><p class="muted">Выберите новость, чтобы изменить её, или добавьте новую.</p></div>
+          <button id="add-post" class="button primary" type="button">+ Добавить новость</button>
+        </div>
+        <div class="list-toolbar"><label class="search-label"><span class="sr-only">Найти новость</span><input id="search" type="search" placeholder="Найти новость по названию…"></label>
+          <div class="tabs" aria-label="Статус новостей"><button type="button" data-filter="all" aria-pressed="true">Все</button><button type="button" data-filter="published" aria-pressed="false">Опубликованные</button><button type="button" data-filter="draft" aria-pressed="false">Черновики</button></div>
+        </div>
+        <p id="list-error" class="error-message" role="alert" hidden></p>
+        <div id="post-list" class="post-list" aria-live="polite"></div>
+        <p class="list-hint muted">Черновики видны только здесь. Опубликованные новости появляются в блоге и на главной странице.</p>
+      </section>
+      <section id="editor-view" hidden>
+        <button id="back" class="back-button" type="button">← К списку новостей</button>
+        <div class="page-heading editor-heading"><div><div class="eyebrow">Редактор новости</div><h1 id="editor-title">Новая новость</h1><p id="editor-status" class="muted">Пока не опубликована</p></div><a id="view-post" class="site-link" href="../" target="_blank" rel="noopener" hidden>Посмотреть на сайте ↗</a></div>
+        <form id="editor-form">
+          <fieldset id="editor-fields">
+            <div class="editor-grid"><div class="editor-main panel">
+              <label>Заголовок<input id="title" maxlength="160" placeholder="Например, новая коллекция для команды" required><span class="field-hint">Заголовок статьи H1.</span></label>
+              <label>Короткое описание<textarea id="excerpt" rows="3" maxlength="400" placeholder="Два-три предложения о главном" required></textarea><span class="field-hint">Этот текст появится на карточке новости.</span></label>
+              <div class="article-editor">
+                <div class="editor-label">Текст статьи</div>
+                <div id="format-toolbar" class="format-toolbar" role="toolbar" aria-label="Оформление статьи">
+                  <div class="format-group"><label class="sr-only" for="text-block">Тип текста</label><select id="text-block"><option value="paragraph">Обычный текст</option><option value="2">Заголовок H2</option><option value="3">Подзаголовок H3</option></select>
+                    <label class="sr-only" for="font-size">Размер шрифта</label><select id="font-size"><option value="auto">Размер</option><option value="14px">14 px</option><option value="16px">16 px</option><option value="18px">18 px</option><option value="20px">20 px</option><option value="24px">24 px</option><option value="28px">28 px</option><option value="32px">32 px</option><option value="40px">40 px</option><option value="48px">48 px</option></select></div>
+                  <div class="format-group"><button type="button" data-command="bold" title="Жирный — Ctrl+B" aria-label="Жирный" aria-pressed="false"><b>Ж</b></button><button type="button" data-command="italic" title="Курсив — Ctrl+I" aria-label="Курсив" aria-pressed="false"><i>К</i></button><button type="button" data-command="underline" title="Подчёркнутый — Ctrl+U" aria-label="Подчёркнутый" aria-pressed="false"><u>Ч</u></button></div>
+                  <div class="format-group"><button type="button" data-align="left" title="По левому краю" aria-label="По левому краю" aria-pressed="true">≡<span class="align-indicator">←</span></button><button type="button" data-align="center" title="По центру" aria-label="По центру" aria-pressed="false">≡<span class="align-indicator">↔</span></button><button type="button" data-align="right" title="По правому краю" aria-label="По правому краю" aria-pressed="false">≡<span class="align-indicator">→</span></button><button type="button" data-align="justify" title="По ширине" aria-label="По ширине" aria-pressed="false">☰</button></div>
+                  <div class="format-group"><button type="button" data-command="bulletList" title="Маркированный список" aria-label="Маркированный список" aria-pressed="false">• ≡</button><button type="button" data-command="orderedList" title="Нумерованный список" aria-label="Нумерованный список" aria-pressed="false">1. ≡</button></div>
+                  <div class="format-group"><button id="undo" type="button" title="Отменить — Ctrl+Z" aria-label="Отменить действие">↶</button><button id="redo" type="button" title="Повторить — Ctrl+Shift+Z" aria-label="Повторить действие">↷</button></div>
+                  <button id="insert-photos" class="photo-button" type="button">+ Фото в текст</button>
+                  <input id="article-files" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden>
+                </div>
+                <div class="block-margin-tools"><div class="block-margin-description"><strong>Отступы фрагмента</strong><span id="block-margin-count">Текущий абзац</span></div><label>Слева, %<input id="block-margin-left" type="number" min="0" max="20" step="1" value="0"></label><label>Справа, %<input id="block-margin-right" type="number" min="0" max="20" step="1" value="0"></label><button id="reset-block-margins" type="button" class="text-button">Сбросить</button><p>Поставьте курсор в абзац или выделите несколько абзацев. Отступы применятся только к ним.</p></div>
+                <div id="image-tools" class="image-tools" hidden><label>Ширина фото<select id="image-width"><option value="25">25%</option><option value="50">50%</option><option value="75">75%</option><option value="100">100%</option></select></label><label>Описание фото<input id="image-alt" maxlength="300" placeholder="Что изображено на фото"></label><button id="delete-image" class="text-button" type="button">Удалить фото</button></div>
+                <div id="body" class="rich-editor"></div>
+              </div>
+            </div><aside class="editor-side">
+              <div class="panel"><h2>Обложка</h2><div id="cover-preview" class="cover-preview"><span>Добавьте изображение</span></div>
+                <input id="cover-file" hidden type="file" accept="image/jpeg,image/png,image/webp">
+                <button id="upload-cover" class="button secondary full-width" type="button">Загрузить изображение</button>
+                <button id="remove-cover" class="text-button" type="button" hidden>Убрать изображение</button>
+                <p class="field-hint">JPG, PNG или WebP. Размер изображения уменьшается автоматически.</p>
+              </div>
+              <div class="panel"><label>Категория<select id="category"><option>Новости</option><option>Технологии</option><option>Бренд</option><option>HR</option><option>Производство</option><option>Идеи</option></select></label>
+                <label>Дата публикации<input id="date" type="date" required></label>
+              </div>
+              <div class="panel"><h2>Отступы статьи</h2><p class="field-hint">Доля ширины текста. Применяются к статье целиком.</p><div class="margin-controls"><label>Слева, %<input id="margin-left" type="number" min="0" max="20" step="1" value="0" required></label><label>Справа, %<input id="margin-right" type="number" min="0" max="20" step="1" value="0" required></label></div><button id="reset-margins" class="text-button" type="button">Сбросить отступы</button></div>
+              <details class="panel seo-panel"><summary>SEO статьи <span class="seo-optional">(необязательно)</span></summary><label>Заголовок в поиске<input id="seo-title" maxlength="160" placeholder="По умолчанию — название новости"><span class="field-hint">Тема статьи.</span></label><label>Описание в поиске<textarea id="seo-description" rows="4" maxlength="320" placeholder="По умолчанию — короткое описание"></textarea><span class="field-hint">Что читатель найдёт в статье.</span></label><div class="seo-snippet"><span>Пример оформления</span><strong id="seo-snippet-title"></strong><p id="seo-snippet-description"></p></div></details>
+            </aside></div>
+            <p id="editor-error" class="error-message" role="alert" hidden></p>
+            <div class="editor-actions"><button id="publish" class="button primary" type="submit">Опубликовать →</button><button id="save-draft" class="button secondary" type="button">Сохранить черновик</button><button id="preview-post" class="button secondary" type="button">Предпросмотр ↗</button><button id="cancel" class="button quiet" type="button">Отмена</button></div>
+          </fieldset>
+        </form>
+      </section>
+    </main>
+    <footer class="app-footer">Тюменская фабрика мерча · Управление блогом</footer>
+  </div>
+  <dialog id="delete-dialog"><form method="dialog"><h2>Удалить новость?</h2><p id="delete-title"></p><p class="muted">Она исчезнет из блога и с главной страницы.</p><div class="dialog-actions"><button value="cancel" class="button secondary">Оставить</button><button value="delete" class="button danger">Удалить новость</button></div></form></dialog>
+  <dialog id="preview-dialog" class="preview-dialog"><div class="preview-toolbar"><div><h2>Предпросмотр статьи</h2><span class="field-hint">Текущие изменения, ещё до сохранения</span></div><div class="preview-device"><button id="preview-desktop" type="button" aria-pressed="true">Компьютер</button><button id="preview-mobile" type="button" aria-pressed="false">Телефон</button></div><button id="close-preview" class="button quiet" type="button" aria-label="Закрыть предпросмотр">Закрыть ✕</button></div><div class="preview-canvas"><iframe id="preview-frame" title="Предварительный просмотр статьи"></iframe></div></dialog>
+</body>
+</html>
