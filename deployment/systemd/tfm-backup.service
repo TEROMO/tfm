@@ -1,0 +1,11 @@
+[Unit]
+Description=Encrypted TFM site and data backup
+After=tfm-blog.service
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/tfm-backup
+Nice=10
+IOSchedulingClass=idle
+UMask=0077
+PrivateTmp=yes
+TimeoutStartSec=180

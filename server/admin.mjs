@@ -15,11 +15,11 @@ const equals = (a, b) => typeof a === 'string' && typeof b === 'string' && Buffe
 const fail = (message, status = 400) => { throw Object.assign(new Error(message), { status }); };
 
 export function createAdminServer(options = {}) {
-  const siteRoot = options.siteRoot ?? path.join(root, 'docs');
+  const siteRoot = options.siteRoot ?? process.env.SITE_ROOT ?? path.join(root, 'docs');
   const authFile = options.authFile ?? process.env.ADMIN_AUTH_FILE ?? path.join(root, 'data/admin.json');
   const store = createStore({
     dataDir: options.dataDir ?? process.env.BLOG_DATA_DIR ?? path.join(root, 'data/blog'),
-    publicRoots: options.publicRoots ?? [path.join(root, 'public'), path.join(root, 'docs'), path.join(root, 'dist')],
+    publicRoots: options.publicRoots ?? (process.env.SITE_ROOT ? [siteRoot] : [path.join(root, 'public'), path.join(root, 'docs'), path.join(root, 'dist')]),
     publicOrigin: options.publicOrigin ?? process.env.PUBLIC_ORIGIN ?? '',
   });
   store.publish();

@@ -13,6 +13,21 @@ const options = { siteRoot, authFile:path.join(testRoot, 'auth.json'), dataDir:p
 fs.mkdirSync(siteRoot, { recursive:true });
 const password = 'temporary-test-password-123!';
 
+test('SITE_ROOT publishes only to the external runtime directory', () => {
+  const previous = process.env.SITE_ROOT;
+  const runtime = path.join(testRoot, 'external-runtime');
+  const originalIndex = fs.readFileSync(path.join(root, 'public/blog/posts/index.json'));
+  process.env.SITE_ROOT = runtime;
+  const app = createAdminServer({ dataDir:path.join(testRoot, 'external-data'), authFile:path.join(testRoot, 'external-auth.json') });
+  try {
+    assert.ok(fs.existsSync(path.join(runtime, 'blog/posts/index.json')));
+    assert.deepEqual(fs.readFileSync(path.join(root, 'public/blog/posts/index.json')), originalIndex);
+  } finally {
+    if (previous === undefined) delete process.env.SITE_ROOT; else process.env.SITE_ROOT = previous;
+    app.server.close();
+  }
+});
+
 test('blog admin: authenticated CRUD, publication, uploads and persistence', async t => {
   let app = createAdminServer(options);
   await new Promise(resolve => app.server.listen(0, '127.0.0.1', resolve));

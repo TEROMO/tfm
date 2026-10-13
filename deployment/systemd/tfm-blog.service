@@ -1,0 +1,43 @@
+[Unit]
+Description=TFM blog administration API
+After=network.target
+
+[Service]
+Type=simple
+User=tfm-site
+Group=www-data
+WorkingDirectory=/srv/tfm/app
+EnvironmentFile=/etc/tfm/site.env
+ExecStart=/usr/local/bin/node /srv/tfm/app/server/admin.mjs
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=15
+UMask=0022
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+RestrictSUIDSGID=yes
+RestrictRealtime=yes
+LockPersonality=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+IPAddressDeny=any
+IPAddressAllow=localhost
+CapabilityBoundingSet=
+AmbientCapabilities=
+ReadWritePaths=/var/lib/tfm
+ReadOnlyPaths=/var/lib/tfm/public/assets /var/lib/tfm/public/blog/admin
+MemoryHigh=192M
+MemoryMax=320M
+CPUQuota=60%
+TasksMax=64
+LimitNOFILE=4096
+
+[Install]
+WantedBy=multi-user.target

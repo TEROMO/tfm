@@ -78,6 +78,8 @@ PUBLIC_ORIGIN=https://example.ru ADMIN_SECURE_COOKIE=true TRUST_PROXY=true HOST=
 
 Замените `example.ru` своим доменом. HTTPS и эти настройки нужны для рабочего сайта. Процесс запускайте от отдельного непривилегированного пользователя под systemd или другим менеджером процессов. Публичный каталог — только `docs/`, а не корень репозитория. Пользователь Node.js должен иметь право записи в `data/`, `public/blog/`, `docs/blog/` и `dist/blog/`; Nginx — право чтения в `docs/`.
 
+Для размещения с неизменяемым кодом используйте `SITE_ROOT` — отдельный публичный каталог. При заданном `SITE_ROOT` сервер публикует новости только в этот каталог; копии `public/`, `docs/` и `dist/` рядом с кодом не изменяются. `BLOG_DATA_DIR` и `ADMIN_AUTH_FILE` задают отдельные приватные пути к оригиналам статей и хешу пароля. Например: `SITE_ROOT=/var/lib/tfm/public BLOG_DATA_DIR=/var/lib/tfm/private/blog ADMIN_AUTH_FILE=/var/lib/tfm/private/admin.json`. Nginx получает доступ только к публичному каталогу, а Node.js запускается без прав root; его исходники можно держать в `/srv/tfm/app` с владельцем root.
+
 Пример блоков для существующего HTTPS-сервера Nginx:
 
 ```nginx
