@@ -1,5 +1,6 @@
 import { legacyContent } from '../src/blog/content.js';
 import { articleMetadata, articlePath } from '../src/blog/seo.js';
+import { arrowMarkup, primaryControlClass } from '../src/site/control-markup.js';
 
 const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const scriptJSON = value => JSON.stringify(value).replace(/</g,'\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
@@ -39,7 +40,7 @@ function renderNode(node) {
 
 export function articleHTML(post, template = '<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><div id="root"></div></body></html>', origin = '') {
   const meta = articleMetadata(post,origin);
-  const date = new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric'}).format(new Date(post.date+'T12:00:00'));
+  const date = new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long'}).format(new Date(post.date+'T12:00:00'))+' '+post.date.slice(0,4);
   const tags = [marker, `<title>${escape(meta.title)}</title>`,
     `<meta name="description" content="${escape(meta.description)}">`, '<meta name="robots" content="index,follow,max-image-preview:large">',
     '<meta property="og:type" content="article">', '<meta property="og:locale" content="ru_RU">',
@@ -49,7 +50,7 @@ export function articleHTML(post, template = '<!doctype html><html lang="ru"><he
     ...(meta.image ? [`<meta property="og:image" content="${escape(meta.image)}">`] : []),
     `<script id="article-jsonld" type="application/ld+json">${scriptJSON(meta.structured)}</script>`,
   ].join('\n');
-  const article = `<div id="top" class="min-h-screen bg-paper text-ink"><main class="news-article-main"><article><header class="news-article-heading"><a class="news-back" href="/blog/">← Назад в блог</a><div class="news-card-meta"><span>${escape(post.category)}</span><time datetime="${escape(post.date)}">${escape(date)}</time></div><h1 class="font-heading">${escape(post.title)}</h1></header>${post.cover ? `<figure class="news-article-cover"><img src="${escape(post.cover)}" alt="${escape(post.title)}" decoding="async"></figure>` : ''}<div class="news-article-body"><p class="news-article-excerpt">${escape(post.excerpt)}</p><div class="news-rich-content" style="padding-left:${percent(post.layout?.left)}%;padding-right:${percent(post.layout?.right)}%">${renderNode(post.content ?? legacyContent(post.body))}</div><div class="news-article-bottom"><span>Опубликовано ${escape(date)}</span><a href="/#lead">Обсудить проект ↗</a></div></div></article></main></div>`;
+  const article = `<div id="top" class="min-h-screen bg-paper text-ink"><main class="news-article-main"><article><header class="news-article-heading"><a class="news-back inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.15em] text-ash transition-colors hover:text-ink" href="/blog/">${arrowMarkup('h-4 w-4 rotate-180')} Назад в блог</a><div class="news-card-meta"><span>${escape(post.category)}</span><time datetime="${escape(post.date)}">${escape(date)}</time></div><h1 class="font-heading">${escape(post.title)}</h1></header>${post.cover ? `<figure class="news-article-cover"><img src="${escape(post.cover)}" alt="${escape(post.title)}" decoding="async"></figure>` : ''}<div class="news-article-body"><p class="news-article-excerpt">${escape(post.excerpt)}</p><div class="news-rich-content" style="padding-left:${percent(post.layout?.left)}%;padding-right:${percent(post.layout?.right)}%">${renderNode(post.content ?? legacyContent(post.body))}</div><div class="news-article-bottom"><div><div class="font-mono text-[10px] uppercase tracking-[0.15em] text-ash">Опубликовано</div><div class="mt-2 text-[15px]">${escape(date)}</div></div><a class="${primaryControlClass}" href="/#lead" data-quiz-open>Обсудить проект${arrowMarkup('cta-arrow h-4 w-4 shrink-0')}</a></div></div></article></main></div>`;
   return template.replaceAll('../../assets/','../../../assets/')
     .replace(/<title>[^]*?<\/title>/gi,'')
     .replace(/<meta\s+(?:name=["'](?:description|robots)["']|property=["']og:[^"']+["'])[^>]*>/gi,'')

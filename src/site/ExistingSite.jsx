@@ -2,6 +2,7 @@
 import * as E from "react"
 import * as D from "react/jsx-runtime"
 import { LatestNews, BlogPage, ArticlePage } from "../blog/Blog"
+import { SiteArrow as j, PrimaryButton as M, ArrowLink as de } from "./controls"
 const _ =
     `` +
     new URL(
@@ -143,36 +144,6 @@ function A({ children: e, dark: t = !1 }) {
       t ? `text-acid` : `text-ash`
     }`,
     children: e,
-  })
-}
-function j({ className: e = `` }) {
-  return (0, D.jsx)(`svg`, {
-    viewBox: `0 0 24 24`,
-    fill: `none`,
-    className: e,
-    "aria-hidden": !0,
-    children: (0, D.jsx)(`path`, {
-      d: `M5 12h14M13 6l6 6-6 6`,
-      stroke: `currentColor`,
-      strokeWidth: `2`,
-      strokeLinecap: `square`,
-    }),
-  })
-}
-function M({ children: e, className: t = ``, ...n }) {
-  return (0, D.jsxs)(`button`, {
-    ...n,
-    className: `cta-button inline-flex h-12 items-center gap-2 rounded-full bg-acid px-5 font-display text-[0.875rem] font-extrabold whitespace-nowrap uppercase tracking-tight text-ink min-[480px]:gap-3 min-[480px]:px-7 min-[480px]:text-[1rem] sm:text-[1.0625rem] ${t}`,
-    children: [e, (0, D.jsx)(j, { className: `cta-arrow h-4 w-4 shrink-0` })],
-  })
-}
-function de({ children: e, dark: t = !1, href: n = `#` }) {
-  return (0, D.jsxs)(`a`, {
-    href: n,
-    className: `arrow-link inline-flex items-center gap-2 font-display text-sm font-bold uppercase tracking-tight underline decoration-acid decoration-4 underline-offset-4 ${
-      t ? `text-paper` : `text-ink`
-    }`,
-    children: [e, ` `, (0, D.jsx)(j, { className: `arrow-link-icon h-4 w-4` })],
   })
 }
 function fe({ inverse: e = !1, href: t = `#` }) {
@@ -1350,7 +1321,7 @@ function Oe() {
   return (0, D.jsx)(`section`, {
     className: `border border-line`,
     children: (0, D.jsxs)(`div`, {
-      className: `mx-auto grid max-w-[1600px] grid-cols-1 lg:grid-cols-[0.7fr_1.3fr]`,
+      className: `site-faq-grid mx-auto grid max-w-[1600px] grid-cols-1 lg:grid-cols-[0.7fr_1.3fr]`,
       children: [
         (0, D.jsxs)(`div`, {
           className: `px-5 sm:px-8 py-14 lg:border-r lg:border-line lg:py-20`,

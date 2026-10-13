@@ -1,0 +1,2 @@
+/* Keep the FAQ frame next to its content when the viewport exceeds the grid. */
+@media(min-width:1602px){.site-faq-grid{border-left:1px solid var(--color-line);border-right:1px solid var(--color-line)}}

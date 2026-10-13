@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { RichContent, type RichNode } from './RichContent'
 import { normalizeContent, normalizeLayout } from './content.js'
 import { setArticleHead } from './article-head'
+import { SiteArrow, PrimaryButton, PrimaryLink, ArrowLink } from '../site/controls'
 
 type Post = {
   id: string
@@ -20,8 +21,8 @@ type Layout = { header: ReactNode; footer: ReactNode; faq?: ReactNode }
 const root = import.meta.env.DEV ? new URL('/', location.href) : new URL(/* @vite-ignore */ '../', import.meta.url)
 const url = (name: string) => new URL(name, root).href
 const dateLabel = (date: string) => new Intl.DateTimeFormat('ru-RU', {
-  day: 'numeric', month: 'long', year: 'numeric',
-}).format(new Date(date + 'T12:00:00'))
+  day: 'numeric', month: 'long',
+}).format(new Date(date + 'T12:00:00')) + ' ' + date.slice(0,4)
 let indexPromise: Promise<Post[]> | undefined
 
 function loadIndex() {
@@ -50,25 +51,25 @@ function FeedState({ error }: { error: boolean }) {
   </p>
 }
 
-function Card({ post, latest = false }: { post: Post; latest?: boolean }) {
-  return <a className="news-card" href={url(`blog/article/${encodeURIComponent(post.slug)}/`)}>
-    {post.cover && <div className="news-card-image"><img src={post.cover} alt={post.title}
-      loading={latest ? 'eager' : 'lazy'} decoding="async" /></div>}
-    <div className="news-card-meta"><span>{post.category}</span><time dateTime={post.date}>{dateLabel(post.date)}</time></div>
-    <h2>{post.title}</h2><p>{post.excerpt}</p>
-    <span className="news-card-link">Читать материал <span aria-hidden="true">↗</span></span>
+function Card({ post, lazy = false, topBorderClassName = '' }: { post: Post; lazy?: boolean; topBorderClassName?:string }) {
+  return <a className={`news-card group border-b border-r border-line p-5 max-[639px]:pb-10 sm:p-8 lg:p-7 ${topBorderClassName}`} href={url(`blog/article/${encodeURIComponent(post.slug)}/`)}>
+    {post.cover && <div className="news-card-image aspect-[16/11] overflow-hidden bg-neutral-200"><img src={post.cover} alt={post.title}
+      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" loading={lazy ? 'lazy' : 'eager'} decoding="async" /></div>}
+    <div className="mt-5 flex items-center justify-between gap-4"><span className="bg-ink px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-paper">{post.category}</span><time className="text-right font-mono text-[10px] uppercase tracking-[0.08em] text-ash" dateTime={post.date}>{dateLabel(post.date)}</time></div>
+    <h2 className="mt-5 font-display text-[1.05rem] uppercase sm:text-[1.15rem]">{post.title}</h2><p className="mt-3 text-[15px] leading-[1.5] text-ink/65">{post.excerpt}</p>
+    <span className="news-card-link arrow-link mt-6 inline-flex items-center gap-2 border-b-2 border-acid pb-1 font-display text-[12px] uppercase">Читать материал <SiteArrow className="arrow-link-icon h-4 w-4" /></span>
   </a>
 }
 
 export function LatestNews() {
   const { posts, error } = usePosts()
   return <section>
-    <div className="news-section-heading">
-      <div><span className="news-label">Блог</span><h2 className="font-heading">Рассказываем<br />о мерче</h2></div>
-      <a className="news-all-link" href={url('blog/')}>Все статьи ↗</a>
+    <div className="mx-auto flex max-w-[1600px] flex-wrap items-end justify-between gap-6 px-5 sm:px-8 py-14">
+      <div><span className="font-mono text-[13px] uppercase tracking-[0.22em] text-ash">Блог</span><h2 className="mt-5 font-heading uppercase tracking-[-1px]">Рассказываем<br />о мерче</h2></div>
+      <ArrowLink href={url('blog/')}>Все статьи</ArrowLink>
     </div>
-    {posts ? posts.length ? <div className="news-grid news-grid-latest">
-      {posts.slice(0, 3).map(post => <Card key={post.id} post={post} latest />)}
+    {posts ? posts.length ? <div className="news-grid news-grid-latest mx-auto grid max-w-[1600px] grid-cols-1 border-l border-t border-line min-[1001px]:grid-cols-3">
+      {posts.slice(0, 3).map(post => <Card key={post.id} post={post} />)}
     </div> : <p className="news-feed-state">Скоро здесь появятся новости.</p> : <FeedState error={error} />}
   </section>
 }
@@ -81,17 +82,18 @@ export function BlogPage({ header, footer, faq }: Layout) {
   const filtered = posts?.filter(post => category === 'Все' || post.category === category)
   return <div id="top" className="min-h-screen bg-paper text-ink">
     {header}<main>
-      <section className="news-blog-hero"><div>
-        <span className="news-label">Идеи · технологии · опыт</span>
-        <h1 className="font-heading">Рассказываем<br />о мерче</h1>
-      </div><p>Практические материалы о производстве, брендинге и вещах, которые становятся частью команды.</p></section>
-      <nav className="news-filters" aria-label="Категории статей">
+      <section className="bg-coal text-paper"><div className="mx-auto grid max-w-[1600px] gap-10 px-5 sm:px-8 pt-40 pb-20 lg:grid-cols-[1.25fr_0.75fr] lg:items-end lg:pt-52 lg:pb-28"><div>
+        <span className="font-mono text-[12px] uppercase tracking-[0.2em] text-acid sm:text-[13px]">Идеи · технологии · опыт</span>
+        <h1 className="mt-7 max-w-4xl font-heading uppercase">Рассказываем<br />о мерче</h1>
+      </div><div className="lg:pb-2"><p className="max-w-xl text-[16px] leading-[1.55] text-paper/70 sm:text-[18px]">Практические материалы о производстве, брендинге и вещах, которые становятся частью команды.</p></div></div></section>
+      <nav className="news-filters mx-auto flex max-w-[1600px] gap-2 overflow-x-auto px-5 sm:px-8 pt-10 pb-6 sm:pt-12" aria-label="Категории статей">
         {categories.map(item => <button key={item} type="button" aria-pressed={category === item}
+          className={`shrink-0 border px-4 py-2 font-mono text-[11px] uppercase tracking-[0.14em] transition-colors ${category === item ? 'border-ink bg-ink text-paper' : 'border-line hover:border-ink'}`}
           onClick={() => { setCategory(item); setLimit(6) }}>{item}</button>)}
       </nav>
       {filtered ? filtered.length ? <>
-        <div className="news-grid">{filtered.slice(0, limit).map(post => <Card key={post.id} post={post} />)}</div>
-        {filtered.length > limit && <div className="news-more"><button type="button" onClick={() => setLimit(limit + 3)}>Посмотреть ещё ↗</button></div>}
+        <div className="news-grid mx-auto grid max-w-[1600px] grid-cols-1 border-l border-line sm:grid-cols-2 xl:grid-cols-3">{filtered.slice(0, limit).map((post,index) => <Card key={post.id} post={post} lazy={index > 2} topBorderClassName={index === 0 ? 'border-t' : index === 1 ? 'sm:border-t' : index === 2 ? 'xl:border-t' : ''} />)}</div>
+        {filtered.length > limit && <div className="mx-auto flex max-w-[1600px] justify-center px-5 sm:px-8 pt-10 pb-2 sm:pt-12"><PrimaryButton type="button" className="justify-center" onClick={() => setLimit(limit + 3)}>Посмотреть ещё</PrimaryButton></div>}
       </> : <p className="news-feed-state">В этой категории пока нет новостей.</p> : <FeedState error={error} />}
       <div className="news-faq">{faq}</div>
     </main>{footer}
@@ -152,7 +154,7 @@ function ArticleView({ header, footer, article, preview = false, missing = false
   return <div id="top" className={'min-h-screen bg-paper text-ink' + (preview ? ' news-is-preview' : '')}
     onClickCapture={preview ? event => { if ((event.target as Element).closest('a,button')) { event.preventDefault(); event.stopPropagation() } } : undefined}>{header}
     <main className="news-article-main"><article>
-      <header className="news-article-heading"><a href={url('blog/')} className="news-back">← Назад в блог</a>
+      <header className="news-article-heading"><a href={url('blog/')} className="news-back inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.15em] text-ash transition-colors hover:text-ink"><SiteArrow className="h-4 w-4 rotate-180" /> Назад в блог</a>
         {article && <><div className="news-card-meta"><span>{article.category}</span><time dateTime={article.date}>{dateLabel(article.date)}</time></div>
           <h1 className="font-heading">{article.title}</h1></>}
       </header>
@@ -160,8 +162,8 @@ function ArticleView({ header, footer, article, preview = false, missing = false
         {article.cover && <figure className="news-article-cover"><img src={article.cover} alt={article.title} decoding="async" /></figure>}
         <div className="news-article-body"><p className="news-article-excerpt">{article.excerpt}</p>
           <RichContent content={article.content} body={article.body} layout={article.layout} />
-          <div className="news-article-bottom"><span>Опубликовано {dateLabel(article.date)}</span>
-            <a href={url('#lead')} data-quiz-open>Обсудить проект ↗</a></div>
+          <div className="news-article-bottom"><div><div className="font-mono text-[10px] uppercase tracking-[0.15em] text-ash">Опубликовано</div><div className="mt-2 text-[15px]">{dateLabel(article.date)}</div></div>
+            <PrimaryLink href={url('#lead')} data-quiz-open>Обсудить проект</PrimaryLink></div>
         </div>
       </> : missing ? <p className="news-feed-state">Эта статья больше недоступна. Выберите другую в блоге.</p>
         : <FeedState error={error} />}
